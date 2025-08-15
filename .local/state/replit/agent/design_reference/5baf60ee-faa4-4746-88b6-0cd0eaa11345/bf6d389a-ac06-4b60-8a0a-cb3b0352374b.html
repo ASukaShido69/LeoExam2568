@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo Exam 2568 - ระบบฝึกสอบนายสิบตำรวจ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sarabun': ['Sarabun', 'sans-serif']
+                    },
+                    colors: {
+                        'primary-bg': '#F5F5F5',
+                        'primary-blue': '#60A5FA',
+                        'secondary-gray': '#D1D5DB',
+                        'success': '#10B981',
+                        'error': '#EF4444',
+                        'warning': '#F59E0B'
+                    },
+                    fontSize: {
+                        'base': '16px',
+                        'lg': '18px',
+                        'xl': '20px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .smooth-transition { transition: all 0.3s ease; }
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .progress-bar-animation { animation: progressFill 0.5s ease-out; }
+        @keyframes progressFill { from { width: 0; } }
+        .hover-scale:hover { transform: scale(1.02); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body class="bg-primary-bg font-sarabun text-gray-800 min-h-screen">
+
+<!-- @COMPONENT: AppContainer [main application wrapper] -->
+<div id="app-container" class="min-h-screen">
+
+    <!-- @COMPONENT: HomePage [landing page with hero banner] -->
+    <div id="homepage" class="page-content">
+        <!-- Navigation Header -->
+        <nav class="bg-white shadow-sm border-b border-secondary-gray">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-xl font-bold text-primary-blue">Leo Exam 2568</h1>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="text-gray-600 hover:text-primary-blue smooth-transition" data-bind="navigateToProfile">โปรไฟล์</button>
+                        <button class="text-gray-600 hover:text-primary-blue smooth-transition" data-bind="navigateToAdmin">จัดการ</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <main class="max-w-4xl mx-auto px-4 py-8 sm:py-16">
+            <!-- Hero Banner -->
+            <div class="relative mb-12">
+                <!-- Thai police officer in uniform saluting with determination background -->
+                <div class="w-full aspect-video rounded-2xl overflow-hidden card-shadow">
+                    <img src="https://pixabay.com/get/g99bfda4fdc9f6173eefb2f7242a546f408cfd5cc2c5230793aee34c557cfea24f110ce8247d8a04f53da76d0ebf1f8eaf3e612439430bfa760a7e30a282f854c_1280.jpg" 
+                         alt="Thai police officer in uniform" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="absolute inset-0 bg-black bg-opacity-40 rounded-2xl flex items-center justify-center">
+                    <div class="text-center text-white">
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">เทพเจ้าลีโอ</h2>
+                        <p class="text-lg sm:text-xl opacity-90">กำลังเตรียมสอบนายสิบตำรวจ</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Action Section -->
+            <div class="text-center mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6">เริ่มต้นการฝึกสอบจำลอง</h3>
+                
+                <!-- Exam Configuration Card -->
+                <div class="bg-white rounded-xl card-shadow p-8 mb-8 max-w-2xl mx-auto">
+                    <h4 class="text-lg font-medium mb-6">เลือกรูปแบบการสอบ</h4>
+                    
+                    <!-- @STATE: examType:'full'|'custom' = 'full' -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <button class="exam-type-btn p-6 border-2 border-primary-blue bg-primary-blue bg-opacity-10 rounded-xl smooth-transition hover-scale" 
+                                data-type="full" data-event="click:selectExamType">
+                            <div class="text-primary-blue font-medium mb-2">สอบเต็มรูปแบบ</div>
+                            <div class="text-sm text-gray-600">150 ข้อ • 3 ชั่วโมง</div>
+                        </button>
+                        
+                        <button class="exam-type-btn p-6 border-2 border-secondary-gray rounded-xl smooth-transition hover:border-primary-blue hover-scale" 
+                                data-type="custom" data-event="click:selectExamType">
+                            <div class="text-gray-700 font-medium mb-2">สอบแบบกำหนดเอง</div>
+                            <div class="text-sm text-gray-600">เลือกวิชาและจำนวนข้อ</div>
+                        </button>
+                    </div>
+
+                    <!-- Custom Exam Configuration -->
+                    <!-- @STATE: showCustomConfig:boolean = false -->
+                    <div id="custom-config" class="hidden border-t pt-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div class="text-left">
+                                <label class="block text-sm font-medium mb-2">ความสามารถทั่วไป</label>
+                                <select class="w-full p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none">
+                                    <option value="0">ไม่สอบ</option>
+                                    <option value="10">10 ข้อ</option>
+                                    <option value="20">20 ข้อ</option>
+                                    <option value="30" selected>30 ข้อ</option>
+                                </select>
+                            </div>
+                            <div class="text-left">
+                                <label class="block text-sm font-medium mb-2">ภาษาไทย</label>
+                                <select class="w-full p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none">
+                                    <option value="0">ไม่สอบ</option>
+                                    <option value="10">10 ข้อ</option>
+                                    <option value="25" selected>25 ข้อ</option>
+                                </select>
+                            </div>
+                            <div class="text-left">
+                                <label class="block text-sm font-medium mb-2">คอมพิวเตอร์</label>
+                                <select class="w-full p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none">
+                                    <option value="0">ไม่สอบ</option>
+                                    <option value="15">15 ข้อ</option>
+                                    <option value="25" selected>25 ข้อ</option>
+                                </select>
+                            </div>
+                            <div class="text-left">
+                                <label class="block text-sm font-medium mb-2">ภาษาอังกฤษ</label>
+                                <select class="w-full p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none">
+                                    <option value="0">ไม่สอบ</option>
+                                    <option value="20">20 ข้อ</option>
+                                    <option value="30" selected>30 ข้อ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-gray-600">รวม: <span class="font-medium text-primary-blue" data-bind="totalQuestions">130 ข้อ</span></span>
+                        </div>
+                    </div>
+
+                    <button class="w-full sm:w-auto px-12 py-4 bg-primary-blue text-white text-lg font-medium rounded-xl smooth-transition hover:bg-blue-500 hover-scale" 
+                            data-event="click:startExam">
+                        เริ่มสอบจำลอง
+                    </button>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                        <div class="text-2xl font-bold text-primary-blue mb-1" data-bind="totalQuestions">1,250</div>
+                        <div class="text-sm text-gray-600">ข้อสอบทั้งหมด</div>
+                    </div>
+                    <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                        <div class="text-2xl font-bold text-success mb-1" data-bind="completedExams">23</div>
+                        <div class="text-sm text-gray-600">ครั้งที่สอบแล้ว</div>
+                    </div>
+                    <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                        <div class="text-2xl font-bold text-warning mb-1" data-bind="averageScore">78%</div>
+                        <div class="text-sm text-gray-600">คะแนนเฉลี่ย</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: HomePage -->
+
+    <!-- @COMPONENT: ExamPage [exam taking interface] -->
+    <div id="exam-page" class="page-content hidden">
+        <!-- Exam Header -->
+        <div class="bg-white border-b border-secondary-gray sticky top-0 z-10">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-lg font-medium text-gray-800">
+                        ข้อที่ <span class="text-primary-blue font-bold" data-bind="currentQuestion">1</span> จาก <span data-bind="totalExamQuestions">150</span>
+                    </div>
+                    <!-- @STATE: timeRemaining:number = 10800 (3 hours in seconds) -->
+                    <div class="text-right">
+                        <div class="text-sm text-gray-600">เวลาที่เหลือ</div>
+                        <div class="text-lg font-bold text-primary-blue" data-bind="timeRemaining">02:59:45</div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full bg-secondary-gray rounded-full h-2">
+                    <div class="bg-primary-blue h-2 rounded-full progress-bar-animation" 
+                         style="width: 0.67%" data-bind="progressWidth"></div>
+                </div>
+                <div class="text-xs text-gray-600 mt-1">ความคืบหน้า: 0.67%</div>
+            </div>
+        </div>
+
+        <!-- Question Content -->
+        <main class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl card-shadow p-8 mb-6">
+                <!-- Subject Badge -->
+                <div class="inline-block px-3 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-sm font-medium rounded-full mb-4" 
+                     data-bind="questionCategory">ความสามารถทั่วไป</div>
+                
+                <!-- Question Text -->
+                <h2 class="text-xl font-medium text-gray-800 mb-6 leading-relaxed" data-bind="questionText">
+                    จากข้อมูลต่อไปนี้ หาค่าเฉลี่ยของชุดข้อมูล: 15, 20, 25, 30, 35, 40 
+                    และหาส่วนเบี่ยงเบนมาตรฐานของชุดข้อมูลเดียวกัน
+                </h2>
+
+                <!-- Answer Options -->
+                <!-- @MAP: options.map((option, index) => ( -->
+                <div class="space-y-3">
+                    <button class="answer-option w-full p-4 text-left border-2 border-secondary-gray rounded-xl smooth-transition hover:border-primary-blue hover:bg-primary-blue hover:bg-opacity-5" 
+                            data-option="0" data-event="click:selectAnswer">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 bg-secondary-gray text-white text-sm font-medium rounded-full flex items-center justify-center mr-4">ก</span>
+                            <span data-mock="true">ค่าเฉลี่ย = 27.5, ส่วนเบี่ยงเบนมาตรฐาน = 8.66</span>
+                        </div>
+                    </button>
+                    
+                    <button class="answer-option w-full p-4 text-left border-2 border-secondary-gray rounded-xl smooth-transition hover:border-primary-blue hover:bg-primary-blue hover:bg-opacity-5" 
+                            data-option="1" data-event="click:selectAnswer">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 bg-secondary-gray text-white text-sm font-medium rounded-full flex items-center justify-center mr-4">ข</span>
+                            <span data-mock="true">ค่าเฉลี่ย = 25.5, ส่วนเบี่ยงเบนมาตรฐาน = 9.35</span>
+                        </div>
+                    </button>
+                    
+                    <button class="answer-option w-full p-4 text-left border-2 border-primary-blue bg-primary-blue bg-opacity-10" 
+                            data-option="2" data-event="click:selectAnswer">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 bg-primary-blue text-white text-sm font-medium rounded-full flex items-center justify-center mr-4">ค</span>
+                            <span data-mock="true">ค่าเฉลี่ย = 27.5, ส่วนเบี่ยงเบนมาตรฐาน = 9.35</span>
+                        </div>
+                    </button>
+                    
+                    <button class="answer-option w-full p-4 text-left border-2 border-secondary-gray rounded-xl smooth-transition hover:border-primary-blue hover:bg-primary-blue hover:bg-opacity-5" 
+                            data-option="3" data-event="click:selectAnswer">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 bg-secondary-gray text-white text-sm font-medium rounded-full flex items-center justify-center mr-4">ง</span>
+                            <span data-mock="true">ค่าเฉลี่ย = 30.0, ส่วนเบี่ยงเบนมาตรฐาน = 8.66</span>
+                        </div>
+                    </button>
+                </div>
+                <!-- @END_MAP -->
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center">
+                <button class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium smooth-transition hover:bg-gray-200" 
+                        data-event="click:previousQuestion" disabled>
+                    ← ข้อก่อนหน้า
+                </button>
+                
+                <div class="text-center">
+                    <!-- @STATE: autoSaveStatus:'saving'|'saved'|'error' = 'saved' -->
+                    <div class="text-xs text-success mb-2">✓ บันทึกอัตโนมัติแล้ว</div>
+                    <button class="px-4 py-2 text-sm text-gray-600 border border-secondary-gray rounded-lg hover:border-primary-blue smooth-transition" 
+                            data-event="click:toggleBookmark">
+                        🔖 ทำเครื่องหมาย
+                    </button>
+                </div>
+                
+                <button class="px-6 py-3 bg-primary-blue text-white rounded-xl font-medium smooth-transition hover:bg-blue-500" 
+                        data-event="click:nextQuestion">
+                    ข้อถัดไป →
+                </button>
+            </div>
+
+            <!-- Submit Button (shows when on last question) -->
+            <div class="hidden mt-6 text-center" id="submit-section">
+                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-4">
+                    <h3 class="text-lg font-medium text-yellow-800 mb-2">พร้อมส่งข้อสอบแล้วหรือไม่?</h3>
+                    <p class="text-sm text-yellow-700">คุณได้ตอบคำถามครบทุกข้อแล้ว กดปุ่มด้านล่างเพื่อส่งข้อสอบ</p>
+                </div>
+                <button class="px-12 py-4 bg-success text-white text-lg font-medium rounded-xl smooth-transition hover:bg-green-600 hover-scale" 
+                        data-event="click:submitExam">
+                    ส่งข้อสอบ
+                </button>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: ExamPage -->
+
+    <!-- @COMPONENT: ResultsPage [exam results and review] -->
+    <div id="results-page" class="page-content hidden">
+        <!-- Results Header -->
+        <div class="bg-white border-b border-secondary-gray">
+            <div class="max-w-4xl mx-auto px-4 py-8 text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">ผลการสอบ</h1>
+                <div class="text-6xl font-bold text-primary-blue mb-2" data-bind="totalScore">78%</div>
+                <div class="text-lg text-gray-600 mb-4">คะแนนรวม <span data-bind="correctAnswers">117</span> จาก <span data-bind="totalQuestions">150</span> ข้อ</div>
+                
+                <!-- Score Breakdown -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-primary-bg rounded-xl p-4">
+                        <div class="text-sm text-gray-600 mb-1">ความสามารถทั่วไป</div>
+                        <div class="text-lg font-bold text-primary-blue">24/30</div>
+                    </div>
+                    <div class="bg-primary-bg rounded-xl p-4">
+                        <div class="text-sm text-gray-600 mb-1">ภาษาไทย</div>
+                        <div class="text-lg font-bold text-primary-blue">22/25</div>
+                    </div>
+                    <div class="bg-primary-bg rounded-xl p-4">
+                        <div class="text-sm text-gray-600 mb-1">คอมพิวเตอร์</div>
+                        <div class="text-lg font-bold text-primary-blue">19/25</div>
+                    </div>
+                    <div class="bg-primary-bg rounded-xl p-4">
+                        <div class="text-sm text-gray-600 mb-1">ภาษาอังกฤษ</div>
+                        <div class="text-lg font-bold text-primary-blue">27/30</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 space-x-4">
+                    <button class="px-6 py-3 bg-primary-blue text-white rounded-xl font-medium smooth-transition hover:bg-blue-500" 
+                            data-event="click:showReview">
+                        ดูเฉลยข้อสอบ
+                    </button>
+                    <button class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium smooth-transition hover:bg-gray-200" 
+                            data-event="click:returnHome">
+                        กลับหน้าหลัก
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Answer Review -->
+        <main class="max-w-4xl mx-auto px-4 py-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">รีวิวข้อสอบ</h2>
+            
+            <!-- Filter Options -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-6">
+                <h3 class="font-medium mb-4">กรองข้อสอบ</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button class="px-4 py-2 bg-primary-blue text-white text-sm rounded-full" data-filter="all">ทั้งหมด</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200" data-filter="correct">ตอบถูก</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200" data-filter="incorrect">ตอบผิด</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200" data-filter="bookmarked">ทำเครื่องหมาย</button>
+                </div>
+            </div>
+
+            <!-- Question Review Items -->
+            <!-- @MAP: questions.map((question, index) => ( -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-4 question-review-item">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <span class="text-lg font-medium text-gray-600 mr-4">ข้อ 1</span>
+                        <span class="px-3 py-1 bg-success bg-opacity-10 text-success text-sm font-medium rounded-full">ตอบถูก</span>
+                        <span class="px-2 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded-full ml-2">ความสามารถทั่วไป</span>
+                    </div>
+                    <span class="text-yellow-500">🔖</span>
+                </div>
+                
+                <h3 class="text-lg font-medium text-gray-800 mb-4" data-mock="true">
+                    จากข้อมูลต่อไปนี้ หาค่าเฉลี่ยของชุดข้อมูล: 15, 20, 25, 30, 35, 40
+                </h3>
+                
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="w-6 h-6 bg-gray-400 text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">ก</span>
+                        <span class="text-gray-600" data-mock="true">ค่าเฉลี่ย = 27.5, ส่วนเบี่ยงเบนมาตรฐาน = 8.66</span>
+                    </div>
+                    
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="w-6 h-6 bg-gray-400 text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">ข</span>
+                        <span class="text-gray-600" data-mock="true">ค่าเฉลี่ย = 25.5, ส่วนเบี่ยงเบนมาตรฐาน = 9.35</span>
+                    </div>
+                    
+                    <div class="flex items-center p-3 bg-success bg-opacity-10 border-2 border-success rounded-lg">
+                        <span class="w-6 h-6 bg-success text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">ค</span>
+                        <span class="text-success font-medium" data-mock="true">ค่าเฉลี่ย = 27.5, ส่วนเบี่ยงเบนมาตรฐาน = 9.35 ✓ (คำตอบที่ถูก)</span>
+                    </div>
+                    
+                    <div class="flex items-center p-3 bg-primary-blue bg-opacity-10 border-2 border-primary-blue rounded-lg">
+                        <span class="w-6 h-6 bg-primary-blue text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">ง</span>
+                        <span class="text-primary-blue font-medium" data-mock="true">ค่าเฉลี่ย = 30.0, ส่วนเบี่ยงเบนมาตรฐาน = 8.66 (คำตอบที่คุณเลือก)</span>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h4 class="font-medium text-gray-800 mb-2">คำอธิบาย:</h4>
+                    <p class="text-gray-600 leading-relaxed" data-mock="true">
+                        การหาค่าเฉลี่ยของชุดข้อมูล 15, 20, 25, 30, 35, 40 ทำได้โดยการนำข้อมูลทั้งหมดมาบวกกัน แล้วหารด้วยจำนวนข้อมูล 
+                        ค่าเฉลี่ย = (15+20+25+30+35+40)/6 = 165/6 = 27.5 
+                        สำหรับส่วนเบี่ยงเบนมาตรฐาน ต้องหาความแปรปรวนก่อน โดยการหา (xi - x̄)² ของแต่ละค่า แล้วหาค่าเฉลี่ย 
+                        จากนั้นหารากที่สองของความแปรปรวน จะได้ส่วนเบี่ยงเบนมาตรฐาน = 9.35
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Incorrect Answer Example -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-4 question-review-item">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <span class="text-lg font-medium text-gray-600 mr-4">ข้อ 47</span>
+                        <span class="px-3 py-1 bg-error bg-opacity-10 text-error text-sm font-medium rounded-full">ตอบผิด</span>
+                        <span class="px-2 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded-full ml-2">ภาษาอังกฤษ</span>
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-medium text-gray-800 mb-4" data-mock="true">
+                    Choose the correct sentence with proper grammar:
+                </h3>
+                
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="w-6 h-6 bg-gray-400 text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">A</span>
+                        <span class="text-gray-600" data-mock="true">She have been working here for five years.</span>
+                    </div>
+                    
+                    <div class="flex items-center p-3 bg-success bg-opacity-10 border-2 border-success rounded-lg">
+                        <span class="w-6 h-6 bg-success text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">B</span>
+                        <span class="text-success font-medium" data-mock="true">She has been working here for five years. ✓ (คำตอบที่ถูก)</span>
+                    </div>
+                    
+                    <div class="flex items-center p-3 bg-error bg-opacity-10 border-2 border-error rounded-lg">
+                        <span class="w-6 h-6 bg-error text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">C</span>
+                        <span class="text-error font-medium" data-mock="true">She is been working here for five years. ✗ (คำตอบที่คุณเลือก)</span>
+                    </div>
+                    
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="w-6 h-6 bg-gray-400 text-white text-xs font-medium rounded-full flex items-center justify-center mr-3">D</span>
+                        <span class="text-gray-600" data-mock="true">She was been working here for five years.</span>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h4 class="font-medium text-gray-800 mb-2">คำอธิบาย:</h4>
+                    <p class="text-gray-600 leading-relaxed" data-mock="true">
+                        ในประโยคนี้ต้องใช้ Present Perfect Continuous Tense เพื่อแสดงการกระทำที่เริ่มต้นในอดีตและยังคงดำเนินต่อมาจนถึงปัจจุบัน 
+                        โครงสร้าง: Subject + has/have + been + V-ing + for/since + time
+                        เนื่องจาก "She" เป็นประธานเอกพจน์ จึงใช้ "has" ไม่ใช่ "have" หรือ "is"
+                        คำตอบที่ถูกต้องคือ "She has been working here for five years."
+                    </p>
+                </div>
+            </div>
+            <!-- @END_MAP -->
+        </main>
+    </div>
+    <!-- @END_COMPONENT: ResultsPage -->
+
+    <!-- @COMPONENT: ProfilePage [user statistics and score history] -->
+    <div id="profile-page" class="page-content hidden">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">โปรไฟล์ของคุณ</h1>
+            
+            <!-- Overview Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                    <div class="text-3xl font-bold text-primary-blue mb-2" data-bind="totalExamsTaken">23</div>
+                    <div class="text-sm text-gray-600">ครั้งที่สอบทั้งหมด</div>
+                </div>
+                <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                    <div class="text-3xl font-bold text-success mb-2" data-bind="averageScore">78.4%</div>
+                    <div class="text-sm text-gray-600">คะแนนเฉลี่ย</div>
+                </div>
+                <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                    <div class="text-3xl font-bold text-warning mb-2" data-bind="bestScore">92%</div>
+                    <div class="text-sm text-gray-600">คะแนนสูงสุด</div>
+                </div>
+                <div class="bg-white rounded-xl card-shadow p-6 text-center">
+                    <div class="text-3xl font-bold text-error mb-2" data-bind="studyStreak">7</div>
+                    <div class="text-sm text-gray-600">วันติดต่อกัน</div>
+                </div>
+            </div>
+
+            <!-- Score History Chart -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">ประวัติคะแนน</h2>
+                    <div class="flex space-x-2">
+                        <select class="px-4 py-2 border border-secondary-gray rounded-lg text-sm focus:border-primary-blue focus:outline-none">
+                            <option value="5">5 ครั้งล่าสุด</option>
+                            <option value="10">10 ครั้งล่าสุด</option>
+                            <option value="all">ทั้งหมด</option>
+                        </select>
+                        <select class="px-4 py-2 border border-secondary-gray rounded-lg text-sm focus:border-primary-blue focus:outline-none">
+                            <option value="all">ทุกวิชา</option>
+                            <option value="general">ความสามารถทั่วไป</option>
+                            <option value="thai">ภาษาไทย</option>
+                            <option value="computer">คอมพิวเตอร์</option>
+                            <option value="english">ภาษาอังกฤษ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="h-80">
+                    <canvas id="scoreChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Subject Performance -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">ผลการเรียนแต่ละวิชา</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">ความสามารถทั่วไป</span>
+                            <div class="flex items-center">
+                                <div class="w-24 h-2 bg-secondary-gray rounded-full mr-3">
+                                    <div class="w-20 h-2 bg-primary-blue rounded-full"></div>
+                                </div>
+                                <span class="text-sm font-medium text-primary-blue">83%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">ภาษาไทย</span>
+                            <div class="flex items-center">
+                                <div class="w-24 h-2 bg-secondary-gray rounded-full mr-3">
+                                    <div class="w-18 h-2 bg-success rounded-full"></div>
+                                </div>
+                                <span class="text-sm font-medium text-success">75%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">คอมพิวเตอร์</span>
+                            <div class="flex items-center">
+                                <div class="w-24 h-2 bg-secondary-gray rounded-full mr-3">
+                                    <div class="w-19 h-2 bg-warning rounded-full"></div>
+                                </div>
+                                <span class="text-sm font-medium text-warning">79%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">ภาษาอังกฤษ</span>
+                            <div class="flex items-center">
+                                <div class="w-24 h-2 bg-secondary-gray rounded-full mr-3">
+                                    <div class="w-22 h-2 bg-primary-blue rounded-full"></div>
+                                </div>
+                                <span class="text-sm font-medium text-primary-blue">91%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">เป้าหมาย</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-primary-bg rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium text-gray-800">คะแนนเป้าหมาย</span>
+                                <span class="text-lg font-bold text-primary-blue">85%</span>
+                            </div>
+                            <div class="w-full h-2 bg-secondary-gray rounded-full">
+                                <div class="w-4/5 h-2 bg-primary-blue rounded-full"></div>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1">ใกล้เป้าหมายแล้ว! 6.6% เท่านั้น</div>
+                        </div>
+                        
+                        <div class="p-4 bg-success bg-opacity-10 rounded-lg border border-success border-opacity-20">
+                            <div class="flex items-center">
+                                <span class="text-success mr-2">✓</span>
+                                <span class="text-success font-medium">สอบติดต่อกัน 7 วัน</span>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-warning bg-opacity-10 rounded-lg border border-warning border-opacity-20">
+                            <div class="flex items-center">
+                                <span class="text-warning mr-2">⏰</span>
+                                <span class="text-warning font-medium">เวลาฝึกวันนี้: 45 นาที</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Exams Table -->
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">ประวัติการสอบล่าสุด</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="border-b border-secondary-gray">
+                            <tr>
+                                <th class="text-left py-3 text-sm font-medium text-gray-600">วันที่</th>
+                                <th class="text-left py-3 text-sm font-medium text-gray-600">ประเภท</th>
+                                <th class="text-left py-3 text-sm font-medium text-gray-600">คะแนน</th>
+                                <th class="text-left py-3 text-sm font-medium text-gray-600">เวลาที่ใช้</th>
+                                <th class="text-left py-3 text-sm font-medium text-gray-600">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-secondary-gray">
+                            <tr data-mock="true">
+                                <td class="py-3 text-sm text-gray-800">15 ม.ค. 2568</td>
+                                <td class="py-3 text-sm text-gray-600">สอบเต็มรูปแบบ</td>
+                                <td class="py-3 text-sm font-medium text-primary-blue">78%</td>
+                                <td class="py-3 text-sm text-gray-600">2:45:30</td>
+                                <td class="py-3"><span class="px-2 py-1 bg-success bg-opacity-10 text-success text-xs rounded-full">ผ่าน</span></td>
+                            </tr>
+                            <tr data-mock="true">
+                                <td class="py-3 text-sm text-gray-800">14 ม.ค. 2568</td>
+                                <td class="py-3 text-sm text-gray-600">ภาษาอังกฤษ 30 ข้อ</td>
+                                <td class="py-3 text-sm font-medium text-primary-blue">91%</td>
+                                <td class="py-3 text-sm text-gray-600">0:35:15</td>
+                                <td class="py-3"><span class="px-2 py-1 bg-success bg-opacity-10 text-success text-xs rounded-full">ผ่าน</span></td>
+                            </tr>
+                            <tr data-mock="true">
+                                <td class="py-3 text-sm text-gray-800">13 ม.ค. 2568</td>
+                                <td class="py-3 text-sm text-gray-600">คอมพิวเตอร์ 25 ข้อ</td>
+                                <td class="py-3 text-sm font-medium text-error">62%</td>
+                                <td class="py-3 text-sm text-gray-600">0:28:45</td>
+                                <td class="py-3"><span class="px-2 py-1 bg-error bg-opacity-10 text-error text-xs rounded-full">ไม่ผ่าน</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ProfilePage -->
+
+    <!-- @COMPONENT: AdminPage [admin dashboard and management] -->
+    <div id="admin-page" class="page-content hidden">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Admin Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">จัดการระบบ</h1>
+                    <p class="text-gray-600 mt-1">Dashboard สำหรับจัดการข้อสอบและดูสถิติ</p>
+                </div>
+                <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 smooth-transition" 
+                        data-event="click:logout">
+                    ออกจากระบบ
+                </button>
+            </div>
+
+            <!-- Admin Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-primary-blue bg-opacity-10 rounded-lg mr-4">
+                            <span class="text-primary-blue text-2xl">📚</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" data-bind="totalQuestions">1,250</div>
+                            <div class="text-sm text-gray-600">ข้อสอบทั้งหมด</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-success bg-opacity-10 rounded-lg mr-4">
+                            <span class="text-success text-2xl">✅</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" data-bind="completedExams">157</div>
+                            <div class="text-sm text-gray-600">การสอบทั้งหมด</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-warning bg-opacity-10 rounded-lg mr-4">
+                            <span class="text-warning text-2xl">📊</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" data-bind="averageScore">78.4%</div>
+                            <div class="text-sm text-gray-600">คะแนนเฉลี่ย</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-error bg-opacity-10 rounded-lg mr-4">
+                            <span class="text-error text-2xl">⏱️</span>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" data-bind="averageTime">2:34:15</div>
+                            <div class="text-sm text-gray-600">เวลาเฉลี่ย</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="bg-white rounded-xl card-shadow mb-8">
+                <div class="border-b border-secondary-gray">
+                    <nav class="flex space-x-8 px-6">
+                        <button class="py-4 border-b-2 border-primary-blue text-primary-blue font-medium admin-tab active" data-tab="questions">
+                            จัดการข้อสอบ
+                        </button>
+                        <button class="py-4 border-b-2 border-transparent text-gray-600 hover:text-gray-800 admin-tab" data-tab="scores">
+                            จัดการผลคะแนน
+                        </button>
+                        <button class="py-4 border-b-2 border-transparent text-gray-600 hover:text-gray-800 admin-tab" data-tab="import">
+                            นำเข้าข้อมูล
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Questions Management Tab -->
+                <div id="questions-tab" class="p-6">
+                    <!-- Search and Filters -->
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <div class="flex-1">
+                            <input type="text" placeholder="ค้นหาข้อสอบ..." 
+                                   class="w-full p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none"
+                                   data-bind="searchQuery">
+                        </div>
+                        <select class="p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none"
+                                data-bind="categoryFilter">
+                            <option value="all">ทุกวิชา</option>
+                            <option value="general">ความสามารถทั่วไป</option>
+                            <option value="thai">ภาษาไทย</option>
+                            <option value="computer">คอมพิวเตอร์</option>
+                            <option value="english">ภาษาอังกฤษ</option>
+                        </select>
+                        <select class="p-3 border border-secondary-gray rounded-lg focus:border-primary-blue focus:outline-none"
+                                data-bind="difficultyFilter">
+                            <option value="all">ทุกระดับ</option>
+                            <option value="easy">ง่าย</option>
+                            <option value="medium">ปานกลาง</option>
+                            <option value="hard">ยาก</option>
+                        </select>
+                        <button class="px-6 py-3 bg-primary-blue text-white rounded-lg font-medium hover:bg-blue-500 smooth-transition"
+                                data-event="click:addQuestion">
+                            เพิ่มข้อสอบ
+                        </button>
+                    </div>
+
+                    <!-- Questions Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="border-b border-secondary-gray">
+                                <tr>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">คำถาม</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">หมวดวิชา</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">ความยาก</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">การกระทำ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-secondary-gray">
+                                <!-- @MAP: questions.map(question => ( -->
+                                <tr data-mock="true">
+                                    <td class="py-4 text-sm text-gray-800 max-w-md truncate">
+                                        จากข้อมูลต่อไปนี้ หาค่าเฉลี่ยของชุดข้อมูล: 15, 20, 25, 30, 35, 40...
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="px-2 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded-full">
+                                            ความสามารถทั่วไป
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="px-2 py-1 bg-warning bg-opacity-10 text-warning text-xs rounded-full">
+                                            ปานกลาง
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="flex space-x-2">
+                                            <button class="px-3 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded hover:bg-opacity-20"
+                                                    data-event="click:editQuestion">แก้ไข</button>
+                                            <button class="px-3 py-1 bg-error bg-opacity-10 text-error text-xs rounded hover:bg-opacity-20"
+                                                    data-event="click:deleteQuestion">ลบ</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr data-mock="true">
+                                    <td class="py-4 text-sm text-gray-800 max-w-md truncate">
+                                        Choose the correct sentence with proper grammar...
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="px-2 py-1 bg-success bg-opacity-10 text-success text-xs rounded-full">
+                                            ภาษาอังกฤษ
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="px-2 py-1 bg-success bg-opacity-10 text-success text-xs rounded-full">
+                                            ง่าย
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="flex space-x-2">
+                                            <button class="px-3 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded hover:bg-opacity-20"
+                                                    data-event="click:editQuestion">แก้ไข</button>
+                                            <button class="px-3 py-1 bg-error bg-opacity-10 text-error text-xs rounded hover:bg-opacity-20"
+                                                    data-event="click:deleteQuestion">ลบ</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between mt-6">
+                        <div class="text-sm text-gray-600">
+                            แสดง 1-20 จาก 1,250 รายการ
+                        </div>
+                        <div class="flex space-x-1">
+                            <button class="px-3 py-2 border border-secondary-gray rounded text-sm hover:bg-gray-50">ก่อนหน้า</button>
+                            <button class="px-3 py-2 bg-primary-blue text-white rounded text-sm">1</button>
+                            <button class="px-3 py-2 border border-secondary-gray rounded text-sm hover:bg-gray-50">2</button>
+                            <button class="px-3 py-2 border border-secondary-gray rounded text-sm hover:bg-gray-50">3</button>
+                            <button class="px-3 py-2 border border-secondary-gray rounded text-sm hover:bg-gray-50">ถัดไป</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scores Management Tab -->
+                <div id="scores-tab" class="p-6 hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800">ประวัติผลคะแนนทั้งหมด</h3>
+                        <button class="px-4 py-2 bg-success text-white rounded-lg hover:bg-green-600 smooth-transition"
+                                data-event="click:exportScores">
+                            ส่งออก CSV
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="border-b border-secondary-gray">
+                                <tr>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">วันที่</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">ประเภทการสอบ</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">คะแนนรวม</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">เวลาที่ใช้</th>
+                                    <th class="text-left py-3 text-sm font-medium text-gray-600">รายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-secondary-gray">
+                                <tr data-mock="true">
+                                    <td class="py-4 text-sm text-gray-800">15 ม.ค. 2568 14:30</td>
+                                    <td class="py-4 text-sm text-gray-600">สอบเต็มรูปแบบ (150 ข้อ)</td>
+                                    <td class="py-4 text-sm font-medium text-primary-blue">78% (117/150)</td>
+                                    <td class="py-4 text-sm text-gray-600">2:45:30</td>
+                                    <td class="py-4">
+                                        <button class="px-3 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded hover:bg-opacity-20"
+                                                data-event="click:viewDetails">ดูรายละเอียด</button>
+                                    </td>
+                                </tr>
+                                <tr data-mock="true">
+                                    <td class="py-4 text-sm text-gray-800">14 ม.ค. 2568 09:15</td>
+                                    <td class="py-4 text-sm text-gray-600">ภาษาอังกฤษ (30 ข้อ)</td>
+                                    <td class="py-4 text-sm font-medium text-success">91% (27/30)</td>
+                                    <td class="py-4 text-sm text-gray-600">0:35:15</td>
+                                    <td class="py-4">
+                                        <button class="px-3 py-1 bg-primary-blue bg-opacity-10 text-primary-blue text-xs rounded hover:bg-opacity-20"
+                                                data-event="click:viewDetails">ดูรายละเอียด</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Import Data Tab -->
+                <div id="import-tab" class="p-6 hidden">
+                    <div class="max-w-2xl">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">นำเข้าข้อสอบจาก CSV</h3>
+                        
+                        <!-- CSV Format Info -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <h4 class="font-medium text-blue-800 mb-2">รูปแบบไฟล์ CSV ที่ถูกต้อง:</h4>
+                            <div class="text-sm text-blue-700 space-y-1">
+                                <div>• คอลัมน์: question_text, option_a, option_b, option_c, option_d, correct_answer, explanation, category, difficulty</div>
+                                <div>• correct_answer: ใช้ตัวเลข 0, 1, 2, 3 (0=ก, 1=ข, 2=ค, 3=ง)</div>
+                                <div>• category: ความสามารถทั่วไป, ภาษาไทย, คอมพิวเตอร์, ภาษาอังกฤษ</div>
+                                <div>• difficulty: ง่าย, ปานกลาง, ยาก</div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="border-2 border-dashed border-secondary-gray rounded-lg p-8 text-center mb-4">
+                            <input type="file" id="csvFile" accept=".csv" class="hidden" data-implementation="Handle CSV file upload">
+                            <div class="text-gray-600">
+                                <div class="text-4xl mb-2">📁</div>
+                                <div class="text-lg font-medium mb-2">เลือกไฟล์ CSV</div>
+                                <div class="text-sm">หรือลากไฟล์มาวางที่นี่</div>
+                            </div>
+                            <button class="mt-4 px-6 py-2 bg-primary-blue text-white rounded-lg hover:bg-blue-500"
+                                    data-event="click:selectFile">
+                                เลือกไฟล์
+                            </button>
+                        </div>
+
+                        <!-- Import Progress -->
+                        <div id="import-progress" class="hidden mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700">กำลังนำเข้า...</span>
+                                <span class="text-sm text-gray-600" data-bind="importProgress">45%</span>
+                            </div>
+                            <div class="w-full bg-secondary-gray rounded-full h-2">
+                                <div class="bg-primary-blue h-2 rounded-full progress-bar-animation" style="width: 45%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Import Results -->
+                        <div id="import-results" class="hidden">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h4 class="font-medium text-green-800 mb-2">ผลการนำเข้าข้อมูล:</h4>
+                                <div class="text-sm text-green-700 space-y-1">
+                                    <div>✓ นำเข้าสำเร็จ: <span class="font-medium" data-bind="successCount">98 ข้อ</span></div>
+                                    <div>⚠️ พบข้อผิดพลาด: <span class="font-medium" data-bind="errorCount">2 ข้อ</span></div>
+                                    <div>📊 ข้อมูลทั้งหมดในระบบ: <span class="font-medium" data-bind="totalAfterImport">1,348 ข้อ</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="w-full mt-4 px-6 py-3 bg-success text-white rounded-lg font-medium hover:bg-green-600 smooth-transition disabled:opacity-50"
+                                data-event="click:startImport" disabled>
+                            เริ่มนำเข้าข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AdminPage -->
+
+</div>
+<!-- @END_COMPONENT: AppContainer -->
+
+<script>
+// TODO: Implement business logic, API calls, and state management
+// This is placeholder JavaScript for UI interactions only
+
+(function() {
+    // @STATE: currentPage:'home'|'exam'|'results'|'profile'|'admin' = 'home'
+    let currentPage = 'home';
+    
+    // Page Navigation
+    function showPage(pageId) {
+        document.querySelectorAll('.page-content').forEach(page => {
+            page.classList.add('hidden');
+        });
+        document.getElementById(pageId).classList.remove('hidden');
+        currentPage = pageId;
+    }
+
+    // Exam Type Selection
+    document.querySelectorAll('.exam-type-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active state from all buttons
+            document.querySelectorAll('.exam-type-btn').forEach(b => {
+                b.classList.remove('border-primary-blue', 'bg-primary-blue', 'bg-opacity-10');
+                b.classList.add('border-secondary-gray');
+            });
+            
+            // Add active state to clicked button
+            this.classList.remove('border-secondary-gray');
+            this.classList.add('border-primary-blue', 'bg-primary-blue', 'bg-opacity-10');
+            
+            // Show/hide custom configuration
+            const customConfig = document.getElementById('custom-config');
+            if (this.dataset.type === 'custom') {
+                customConfig.classList.remove('hidden');
+            } else {
+                customConfig.classList.add('hidden');
+            }
+        });
+    });
+
+    // Answer Selection
+    document.querySelectorAll('.answer-option').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove selection from all options
+            document.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('border-primary-blue', 'bg-primary-blue', 'bg-opacity-10');
+                opt.classList.add('border-secondary-gray');
+            });
+            
+            // Add selection to clicked option
+            this.classList.remove('border-secondary-gray');
+            this.classList.add('border-primary-blue', 'bg-primary-blue', 'bg-opacity-10');
+        });
+    });
+
+    // Admin Tab Navigation
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active state from all tabs
+            document.querySelectorAll('.admin-tab').forEach(t => {
+                t.classList.remove('border-primary-blue', 'text-primary-blue');
+                t.classList.add('border-transparent', 'text-gray-600');
+            });
+            
+            // Add active state to clicked tab
+            this.classList.remove('border-transparent', 'text-gray-600');
+            this.classList.add('border-primary-blue', 'text-primary-blue');
+            
+            // Show corresponding tab content
+            const tabId = this.dataset.tab + '-tab';
+            document.querySelectorAll('[id$="-tab"]').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+        });
+    });
+
+    // Initialize Chart.js for Profile Page
+    function initializeChart() {
+        const ctx = document.getElementById('scoreChart');
+        if (ctx && typeof Chart !== 'undefined') {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['ครั้งที่ 19', 'ครั้งที่ 20', 'ครั้งที่ 21', 'ครั้งที่ 22', 'ครั้งที่ 23'],
+                    datasets: [{
+                        label: 'คะแนน (%)',
+                        data: [72, 75, 83, 69, 78],
+                        borderColor: '#60A5FA',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: '#D1D5DB'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#D1D5DB'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Timer functionality for exam page
+    function startExamTimer() {
+        let timeRemaining = 10800; // 3 hours in seconds
+        
+        const timerElement = document.querySelector('[data-bind="timeRemaining"]');
+        if (!timerElement) return;
+        
+        function updateTimer() {
+            const hours = Math.floor(timeRemaining / 3600);
+            const minutes = Math.floor((timeRemaining % 3600) / 60);
+            const seconds = timeRemaining % 60;
+            
+            timerElement.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeRemaining <= 0) {
+                // TODO: Auto-submit exam when time runs out
+                alert('หมดเวลาการสอบ!');
+                return;
+            }
+            
+            timeRemaining--;
+            setTimeout(updateTimer, 1000);
+        }
+        
+        updateTimer();
+    }
+
+    // Example navigation handlers
+    document.addEventListener('click', function(e) {
+        const target = e.target;
+        
+        if (target.matches('[data-event*="navigateToProfile"]')) {
+            showPage('profile-page');
+            setTimeout(initializeChart, 100);
+        }
+        
+        if (target.matches('[data-event*="navigateToAdmin"]')) {
+            showPage('admin-page');
+        }
+        
+        if (target.matches('[data-event*="startExam"]')) {
+            showPage('exam-page');
+            startExamTimer();
+        }
+        
+        if (target.matches('[data-event*="submitExam"]')) {
+            showPage('results-page');
+        }
+        
+        if (target.matches('[data-event*="returnHome"]')) {
+            showPage('homepage');
+        }
+        
+        if (target.matches('[data-event*="showReview"]')) {
+            // Scroll to review section
+            const reviewSection = document.querySelector('.question-review-item');
+            if (reviewSection) {
+                reviewSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        showPage('homepage');
+        
+        // Add some interactive animations
+        document.querySelectorAll('.hover-scale').forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            el.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    });
+})();
+</script>
+
+</body>
+</html>
